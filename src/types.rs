@@ -11,6 +11,7 @@ extern crate redis;
 use std::error;
 use std::fmt;
 use std::fmt::Display;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 /// Holds the error information
