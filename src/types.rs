@@ -103,4 +103,7 @@ pub type RedisStringResult = RedisResult<String>;
 pub type RedisBoolResult = RedisResult<bool>;
 
 /// ConnectionAddr type
-pub type ConnectionAddr = redis::ConnectionAddr;
+pub enum ConnectionAddr {
+   Tcp(String, u16),
+   Unix(PathBuf),
+}

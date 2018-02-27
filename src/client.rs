@@ -287,9 +287,13 @@ pub fn create(connection_string: &str) -> Result<Client, RedisError> {
 
 /// Constructs a new redis client with ConnectionInfo elements.<br>
 pub fn create_from_connection_info(addr: ConnectionAddr, db: i64, password: Option<String>) -> Result<Client, RedisError> {
+    let connection_addr = match addr {
+        Tcp(host, port) => redis::ConnectionAddr::Tcp(host, port),
+        Unix(buf) => redis::ConnectionAddr::Unix(buf),
+    };
     match redis::Client::open(
         redis::ConnectionInfo {
-            addr: Box::new(addr),
+            addr: Box::new(connection_addr),
             db: db,
             passwd: password,
         }
