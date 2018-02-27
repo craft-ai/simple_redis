@@ -101,3 +101,6 @@ pub type RedisStringResult = RedisResult<String>;
 
 /// Holds bool result or error
 pub type RedisBoolResult = RedisResult<bool>;
+
+/// ConnectionAddr type
+pub type ConnectionAddr = redis::ConnectionAddr;

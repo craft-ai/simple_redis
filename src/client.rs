@@ -11,7 +11,7 @@ extern crate redis;
 use connection;
 use std::str::FromStr;
 use subscriber;
-use types::{ErrorInfo, RedisBoolResult, RedisEmptyResult, RedisError, RedisMessageResult,
+use types::{ConnectionAddr, ErrorInfo, RedisBoolResult, RedisEmptyResult, RedisError, RedisMessageResult,
             RedisResult, RedisStringResult};
 
 /// The redis client which enables to invoke redis operations.
@@ -267,6 +267,32 @@ impl Client {
 /// ```
 pub fn create(connection_string: &str) -> Result<Client, RedisError> {
     match redis::Client::open(connection_string) {
+        Ok(redis_client) => {
+            let redis_connection = connection::create();
+            let redis_pubsub = subscriber::create();
+
+            let client = Client {
+                client: redis_client,
+                connection: redis_connection,
+                subscriber: redis_pubsub,
+            };
+
+            Ok(client)
+        }
+        Err(error) => Err(RedisError {
+            info: ErrorInfo::RedisError(error),
+        }),
+    }
+}
+
+pub fn create_from_connection_info(addr: Box<ConnectionAddr>, db: i64, password: Option<String>) -> Result<Client, RedisError> {
+    match redis::Client::open(
+        redis::ConnectionInfo {
+            addr: Box::new(addr),
+            db: db,
+            passwd: password,
+        }
+    ) {
         Ok(redis_client) => {
             let redis_connection = connection::create();
             let redis_pubsub = subscriber::create();
